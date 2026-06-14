@@ -72,27 +72,24 @@ extension EditorViewController {
 
     override var canBecomeFirstResponder: Bool { true }
 
+    /// All accelerator-bearing Moebius commands, generated from the same
+    /// menu_data.json the web menu uses. Each carries its dispatch action as a
+    /// property list and is routed through the (tested) web menu logic. Only
+    /// modified shortcuts exist here, so plain editing keys still reach the editor.
     override var keyCommands: [UIKeyCommand]? {
-        // Only Command-based shortcuts, so ordinary editing keys (arrows, F-keys,
-        // letters) still reach the web editor.
-        [
-            UIKeyCommand(input: "n", modifierFlags: .command, action: #selector(cmdNew)),
-            UIKeyCommand(input: "o", modifierFlags: .command, action: #selector(cmdOpen)),
-            UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(cmdSave)),
-            UIKeyCommand(input: "e", modifierFlags: .command, action: #selector(cmdExport)),
-        ]
+        MenuData.loadCommands().map { cmd in
+            UIKeyCommand(title: cmd.title,
+                         action: #selector(handleMenuKeyCommand(_:)),
+                         input: cmd.input,
+                         modifierFlags: cmd.modifierFlags,
+                         propertyList: cmd.actionJS)
+        }
     }
 
-    @objc private func cmdNew() { newDocument() }
-    @objc private func cmdOpen() { requestOpen() }
-    @objc private func cmdSave() { menuCommand("save") }
-    @objc private func cmdExport() { menuCommand("export_as_png") }
-
-    // MARK: - Actions
-
-    private func newDocument() { sendToWeb("new_document", ["columns": 80, "rows": 25]) }
-    private func menuCommand(_ channel: String) { sendToWeb("menu", ["channel": channel]) }
-    private func requestOpen() { presentOpenPicker() }
+    @objc private func handleMenuKeyCommand(_ sender: UIKeyCommand) {
+        guard let json = sender.propertyList as? String else { return }
+        webView.evaluateJavaScript("window.MoebiusMenu && window.MoebiusMenu.run(\(json));", completionHandler: nil)
+    }
 
     // MARK: - Alerts
 

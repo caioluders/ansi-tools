@@ -28,6 +28,9 @@ function copy_assets() {
     // Host page + touch styling.
     cpSync(path.join(root, "src/index.html"), path.join(www, "index.html"));
     cpSync(path.join(root, "src/mobile.css"), path.join(www, "mobile.css"));
+    // Menu model, so the native shell can build an iPad menu bar / key commands
+    // from the same data the web menu uses.
+    cpSync(path.join(root, "src/menu_data.json"), path.join(www, "menu_data.json"));
 }
 
 const options = {
