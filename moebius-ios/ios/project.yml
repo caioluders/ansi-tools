@@ -1,0 +1,55 @@
+# XcodeGen spec for the Moebius iOS app.
+#
+# Generate the Xcode project on a Mac with:
+#     brew install xcodegen        # once
+#     cd moebius-ios/ios
+#     xcodegen generate
+#     open Moebius.xcodeproj
+#
+# The "Build Web Bundle" pre-build script runs the esbuild pipeline in
+# ../web so the WKWebView payload (web/dist/www) is always up to date, and it is
+# embedded as a folder reference resource.
+
+name: Moebius
+options:
+  bundleIdPrefix: art.moebius
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1,2"   # iPhone + iPad
+    DEVELOPMENT_TEAM: ""            # set your team in Xcode signing
+
+targets:
+  Moebius:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      - path: ../web/dist/www
+        name: www
+        type: folder            # blue folder reference: ships the whole tree
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: art.moebius.ios
+        INFOPLIST_FILE: Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/Moebius.entitlements
+        ENABLE_USER_SCRIPT_SANDBOXING: "NO"
+    preBuildScripts:
+      - name: Build Web Bundle
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          cd "$SRCROOT/../web"
+          if [ -z "$(command -v node)" ]; then
+            echo "warning: node not found; skipping web bundle build (using existing dist/www)"
+            exit 0
+          fi
+          if [ ! -d node_modules ]; then npm ci || npm install; fi
+          npm run build
