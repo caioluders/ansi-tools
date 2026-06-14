@@ -12,6 +12,8 @@
 const bridge = require("./bridge.js");
 require("../vendor/moebius/controller.js");
 require("./touch_input.js");
+require("./menu.js");
+require("./modals.js");
 
 function start() { bridge.boot(); }
 

@@ -10,10 +10,11 @@ replaced by a thin set of browser/iOS shims and a native Swift shell. This gives
 us a path to full feature parity while writing only the genuinely-native parts
 (files, dialogs, clipboard, and — most importantly — a touch input model).
 
-> Status: **working web layer, verified end-to-end in headless Chromium**
-> (boots, renders, accepts typed + F-key input, saves valid ANSI + SAUCE), plus a
-> native iOS shell scaffold. See [ROADMAP.md](ROADMAP.md) for what's done and
-> what's next.
+> Status: **working web layer, verified end-to-end in headless Chromium** — boots,
+> renders, accepts typed + F-key input, saves valid ANSI + SAUCE, and has the full
+> Moebius command menu (166 commands) plus core dialogs (SAUCE, resize,
+> preferences, connect) — alongside a native iOS shell scaffold. See
+> [ROADMAP.md](ROADMAP.md) for what's done and what's next.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -52,8 +53,11 @@ moebius-ios/
 │   │   ├── bridge.js           JS re-implementation of the Electron main process
 │   │   ├── prefs.js            default preferences (fkeys table, etc.)
 │   │   ├── touch_input.js      touch + mobile-keyboard adaptation layer
+│   │   ├── menu.js             data-driven touch menu (full command set)
+│   │   ├── menu_data.json      menu extracted faithfully from Moebius's menu.js
+│   │   ├── modals.js           SAUCE / resize / preferences / connect dialogs
 │   │   ├── index.html          host page + on-screen control bar
-│   │   └── mobile.css          control-bar / CP437-palette styling
+│   │   └── mobile.css          control-bar / palette / menu / modal styling
 │   ├── build.mjs               esbuild pipeline → dist/www
 │   ├── smoke_test.mjs          headless boot/render check
 │   └── func_test.mjs           headless type/F-key/save check + screenshot

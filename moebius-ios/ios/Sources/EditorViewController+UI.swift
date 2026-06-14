@@ -62,17 +62,10 @@ extension EditorViewController {
     }
 
     @objc private func showMenu(_ sender: UIView) {
-        let sheet = UIAlertController(title: "Moebius", message: nil, preferredStyle: .actionSheet)
-        sheet.addAction(UIAlertAction(title: "New", style: .default) { _ in self.newDocument() })
-        sheet.addAction(UIAlertAction(title: "Open…", style: .default) { _ in self.requestOpen() })
-        sheet.addAction(UIAlertAction(title: "Save…", style: .default) { _ in self.menuCommand("save_as") })
-        sheet.addAction(UIAlertAction(title: "Export as PNG…", style: .default) { _ in self.menuCommand("export_as_png") })
-        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        if let pop = sheet.popoverPresentationController {
-            pop.sourceView = sender
-            pop.sourceRect = sender.bounds
-        }
-        present(sheet, animated: true)
+        // Open the full data-driven Moebius menu rendered in the web layer, which
+        // exposes the complete command set (File/Edit/Selection/Colors/View/
+        // Network) and routes Open/Save back through this native shell.
+        webView.evaluateJavaScript("window.MoebiusMenu && window.MoebiusMenu.open();", completionHandler: nil)
     }
 
     // MARK: - Hardware keyboard commands

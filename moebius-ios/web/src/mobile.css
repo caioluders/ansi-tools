@@ -117,3 +117,103 @@
 /* Give the editor viewport room above the control bar so nothing hides behind
    it. The bar is ~92px tall; pad the body when in mobile mode. */
 body.mobile #viewport { padding-bottom: 100px; box-sizing: border-box; }
+
+/* ===================== Touch menu overlay ===================== */
+#mb_menu_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 6000;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+#mb_menu_overlay.hidden { display: none; }
+#mb_menu_panel {
+    width: min(380px, 86vw);
+    height: 100%;
+    background: #1e1e24;
+    border-right: 1px solid #000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+#mb_menu_header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #000;
+    background: #26262e;
+}
+#mb_menu_title { flex: 1; color: #fff; font: 600 16px -apple-system, system-ui, sans-serif; text-align: center; }
+#mb_menu_back, #mb_menu_close {
+    width: 36px; height: 36px; border: 0; border-radius: 8px;
+    background: #3a3a42; color: #fff; font-size: 20px; cursor: pointer;
+}
+#mb_menu_list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.mb_menu_item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid #2a2a31;
+    color: #e8e8ea;
+    font: 15px -apple-system, system-ui, sans-serif;
+    text-align: left;
+    cursor: pointer;
+}
+.mb_menu_item:active { background: #2f2f38; }
+.mb_menu_item span:first-child { flex: 1; }
+.mb_menu_acc { color: #8a8a93; font-size: 13px; }
+.mb_menu_chevron { color: #8a8a93; font-size: 18px; }
+.mb_menu_checkbox::before {
+    content: "○"; color: #6a6a73; margin-right: 2px; width: 16px; display: inline-block;
+}
+.mb_menu_checkbox.checked::before { content: "●"; color: #3477f5; }
+.mb_menu_sep { height: 1px; background: #000; margin: 4px 0; }
+
+/* ===================== Modal dialogs ===================== */
+.mb_modal_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 7000;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+.mb_modal {
+    width: min(420px, 92vw);
+    max-height: 86vh;
+    overflow-y: auto;
+    background: #24242b;
+    border: 1px solid #000;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+.mb_modal_title { color: #fff; font: 600 18px -apple-system, system-ui, sans-serif; margin-bottom: 14px; }
+.mb_modal_field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.mb_modal_field span { color: #b8b8c0; font-size: 13px; }
+.mb_modal_input {
+    background: #15151a;
+    border: 1px solid #3a3a42;
+    border-radius: 8px;
+    color: #fff;
+    font: 15px -apple-system, system-ui, sans-serif;
+    padding: 10px;
+}
+textarea.mb_modal_input { min-height: 80px; resize: vertical; }
+.mb_modal_actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+.mb_modal_btn {
+    border: 0; border-radius: 8px; padding: 10px 18px;
+    background: #3a3a42; color: #fff; font-size: 15px; cursor: pointer;
+}
+.mb_modal_btn.primary { background: #3477f5; }

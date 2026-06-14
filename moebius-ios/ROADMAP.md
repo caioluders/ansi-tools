@@ -20,6 +20,13 @@ the Moebius renderer in a WKWebView and replacing only the native layer.
       registration, XcodeGen project.
 - [x] Headless verification: boot/render smoke test + type/F-key/save functional
       test with screenshot.
+- [x] Full menu: data-driven touch menu extracted faithfully from Moebius's
+      `menu.js` (166 commands across File/Edit/Selection/Colors/View/Network,
+      with accelerators and checkboxes), driving the renderer's IPC channels.
+      Native ≡ button opens it.
+- [x] Core modals: SAUCE info and canvas Resize (wired into the renderer's
+      synchronous `get_sauce_info`/`get_canvas_size` round-trip), plus
+      Preferences and Connect-to-Server dialogs. Verified end-to-end headlessly.
 
 ## Next up
 
@@ -42,14 +49,17 @@ the Moebius renderer in a WKWebView and replacing only the native layer.
       cycling) onto the control bar / a secondary panel.
 
 ### Native chrome & parity
-- [ ] Rebuild Moebius's menu (`app/menu.js`, ~37 KB of commands) as a native iOS
-      menu (`UIMenu`/key commands) driving the existing renderer IPC channels.
+- [x] Rebuild Moebius's menu as a data-driven touch menu (see Done). Optional:
+      also mirror it as a native `UIMenu` for the iPad menu bar / hardware
+      shortcuts beyond the current curated ⌘ set.
+- [ ] Live menu checkbox state: fully sync every toggle from
+      `update_menu_checkboxes` (currently optimistic + a couple of keys).
 - [ ] Multi-button save prompt as a native action sheet (currently collapses onto
       confirm/alert — see `shims/electron-remote.js`).
-- [ ] Preferences screen (nick/group, iCE colours, fonts) → push via `set_prefs`.
-- [ ] Modal windows that desktop Moebius opens as separate `BrowserWindow`s
-      (resize, SAUCE info, new-connection, fkey editor) → native sheets or
-      in-page modals.
+- [ ] fkey editor modal (the renderer's `fkey_prefs` send_sync) for customising
+      the F1–F12 character sets.
+- [ ] Remaining modal windows (new-connection saved-servers list, control
+      characters warning) and richer Preferences (iCE colours default, fonts).
 - [ ] Multi-document support via multiple `UIScene`s (iPad).
 - [ ] In-place save (write back to the security-scoped URL) in addition to export.
 - [ ] Reference image import, guides, drawing grid toggles.
