@@ -1,0 +1,119 @@
+/* mobile.css — styling for the iOS touch input layer (control bar, CP437
+   palette, hidden capture field). Only active when <body> has the .mobile class,
+   which touch_input.js adds on touch devices / inside the native shell. */
+
+#mobile_text_capture {
+    position: fixed;
+    left: -10000px;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    border: 0;
+    padding: 0;
+    /* Keep it focusable (not display:none) so it can summon the soft keyboard. */
+}
+
+/* The control bar sits above the home-indicator safe area at the bottom. */
+#mobile_bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5000;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom)) 8px;
+    background: rgba(28, 28, 32, 0.96);
+    border-top: 1px solid #000;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+#mobile_bar.hidden { display: none; }
+
+.mb_row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+.mb_fkeys .mb_key { flex: 1 1 0; min-width: 0; }
+
+.mb_key {
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 14px;
+    color: #e8e8ea;
+    background: #3a3a42;
+    border: 1px solid #1c1c20;
+    border-radius: 7px;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 8px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+}
+.mb_key:active { background: #55555f; }
+.mb_key.active { background: #3477f5; border-color: #2a5fd0; color: #fff; }
+.mb_wide { min-width: 56px; }
+
+/* D-pad: compact 3x3 arrangement docked to the right of the controls row. */
+.mb_dpad {
+    margin-left: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 34px);
+    grid-template-rows: repeat(2, 34px);
+    gap: 3px;
+}
+.mb_arrow { min-width: 34px; height: 34px; padding: 0; }
+.mb_up    { grid-column: 2; grid-row: 1; }
+.mb_left  { grid-column: 1; grid-row: 2; }
+.mb_down  { grid-column: 2; grid-row: 2; }
+.mb_right { grid-column: 3; grid-row: 2; }
+
+/* CP437 glyph palette popover. */
+#mobile_charmap {
+    position: fixed;
+    left: 50%;
+    bottom: 96px;
+    transform: translateX(-50%);
+    z-index: 5001;
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 1px;
+    padding: 8px;
+    max-width: 95vw;
+    background: rgba(20, 20, 24, 0.98);
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+#mobile_charmap.hidden { display: none; }
+.mc_cell {
+    font-family: "IBM VGA", monospace;
+    font-size: 16px;
+    color: #d8d8d8;
+    width: 26px;
+    height: 26px;
+    background: #2a2a30;
+    border: 1px solid #15151a;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+.mc_cell:active { background: #3477f5; color: #fff; }
+
+/* Give the editor viewport room above the control bar so nothing hides behind
+   it. The bar is ~92px tall; pad the body when in mobile mode. */
+body.mobile #viewport { padding-bottom: 100px; box-sizing: border-box; }

@@ -1,0 +1,23 @@
+{
+  "name": "moebius-ios-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser/WKWebView build of the Moebius ANSI editor renderer for the iOS port",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "serve": "node build.mjs && node serve.mjs"
+  },
+  "dependencies": {
+    "linkify-plugin-ticket": "4.1",
+    "linkify-string": "4.1",
+    "linkifyjs": "4.1",
+    "upng-js": "2.1"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "esbuild": "0.21.5",
+    "events": "3.3.0",
+    "path-browserify": "1.0.1"
+  }
+}
