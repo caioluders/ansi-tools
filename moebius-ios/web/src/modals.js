@@ -7,8 +7,39 @@
 // submit emit "set_sauce_info" / "set_canvas_size" back to the renderer.
 
 const ipc = require("../shims/ipc.js");
+const libtextmode = require("../vendor/moebius/libtextmode/libtextmode.js");
 
 function emit(channel, arg) { ipc.to_renderer.emit(channel, arg); }
+
+// A 16x16 CP437 glyph picker; calls onPick(code) with the chosen code point.
+function glyph_picker({ title = "Choose Character", current = -1, onPick }) {
+    close_any();
+    const overlay = document.createElement("div");
+    overlay.className = "mb_modal_overlay";
+    overlay.addEventListener("pointerdown", (e) => { if (e.target === overlay) overlay.remove(); });
+
+    const dialog = document.createElement("div");
+    dialog.className = "mb_modal";
+    const h = document.createElement("div");
+    h.className = "mb_modal_title";
+    h.textContent = title;
+    dialog.append(h);
+
+    const grid = document.createElement("div");
+    grid.className = "mb_glyph_grid";
+    for (let code = 0; code < 256; code++) {
+        const cell = document.createElement("button");
+        cell.className = "mb_glyph_cell";
+        if (code === current) cell.classList.add("selected");
+        cell.textContent = String.fromCharCode(libtextmode.cp437_to_unicode(code)) || " ";
+        cell.title = String(code);
+        cell.addEventListener("pointerdown", (e) => { e.preventDefault(); overlay.remove(); onPick(code); });
+        grid.append(cell);
+    }
+    dialog.append(grid);
+    overlay.append(dialog);
+    document.body.append(overlay);
+}
 
 // ---- Generic dialog builder -------------------------------------------------
 
@@ -127,10 +158,24 @@ function connect() {
     });
 }
 
+// Editing an F-key character set entry (or the custom block when num === -1).
+function fkey_prefs(data = {}) {
+    const bridge = require("./bridge.js");
+    glyph_picker({
+        title: data.num === -1 ? "Custom Block Character" : `F-key ${data.num + 1} Character`,
+        current: data.current,
+        onPick: (code) => {
+            if (data.num === -1) bridge.set_custom_block(code);
+            else bridge.update_fkey(data.fkey_index, data.num, code);
+        },
+    });
+}
+
 // Answer the renderer's synchronous requests by opening the right dialog.
 ipc.register_sync("get_sauce_info", (data) => { sauce(data); return undefined; });
 ipc.register_sync("get_canvas_size", (data) => { resize(data); return undefined; });
+ipc.register_sync("fkey_prefs", (data) => { fkey_prefs(data); return undefined; });
 
-window.MoebiusModals = { sauce, resize, preferences, connect };
+window.MoebiusModals = { sauce, resize, preferences, connect, fkey_prefs, glyph_picker };
 
-module.exports = { sauce, resize, preferences, connect };
+module.exports = { sauce, resize, preferences, connect, fkey_prefs, glyph_picker };

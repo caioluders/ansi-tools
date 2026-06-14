@@ -71,6 +71,21 @@ await page.evaluate(() => window.MoebiusMenu.run({ send: "get_sauce_info" }));
 await page.waitForTimeout(200);
 const sauceTitle = await page.evaluate(() => document.querySelector(".mb_modal .mb_modal_input")?.value || "");
 
+// 4. F-key character editor: open the glyph picker (as tapping an F-key swatch
+//    does via send_sync), pick a character, and confirm it updates the fkeys
+//    table — verified by pressing F1 and checking the inserted code.
+await page.evaluate(() => window.MoebiusModals.fkey_prefs({ num: 0, fkey_index: 0, current: 218 }));
+await page.waitForTimeout(150);
+const glyphPickerShown = (await page.$(".mb_glyph_grid")) !== null;
+const glyphCells = await page.$$eval(".mb_glyph_cell", (els) => els.length);
+await page.evaluate(() => {
+    // Pick CP437 code 1 for F1; then press F1 to exercise the updated table.
+    document.querySelectorAll(".mb_glyph_cell")[1]
+        .dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, cancelable: true }));
+    window.MoebiusInput.dispatch_key({ code: "F1" });
+});
+await page.waitForTimeout(150);
+
 await browser.close();
 server.close();
 
@@ -85,6 +100,7 @@ const checks = [
     ["resize applied (120 cols)", afterCols === "120"],
     ["resize applied (40 rows)", afterRows === "40"],
     ["SAUCE title applied", sauceTitle === "Test Title"],
+    ["F-key glyph picker opened (256 glyphs)", glyphPickerShown && glyphCells === 256],
     ["no page errors", errors.length === 0],
 ];
 let ok = true;

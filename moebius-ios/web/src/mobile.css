@@ -217,3 +217,24 @@ textarea.mb_modal_input { min-height: 80px; resize: vertical; }
     background: #3a3a42; color: #fff; font-size: 15px; cursor: pointer;
 }
 .mb_modal_btn.primary { background: #3477f5; }
+
+/* Glyph picker (F-key / custom block character chooser) */
+.mb_glyph_grid {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    gap: 2px;
+    margin: 4px 0 10px;
+}
+.mb_glyph_cell {
+    font-family: "IBM VGA", monospace;
+    font-size: 16px;
+    aspect-ratio: 1;
+    color: #d8d8d8;
+    background: #15151a;
+    border: 1px solid #2a2a31;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 0;
+}
+.mb_glyph_cell:active { background: #3477f5; color: #fff; }
+.mb_glyph_cell.selected { border-color: #3477f5; background: #243; }

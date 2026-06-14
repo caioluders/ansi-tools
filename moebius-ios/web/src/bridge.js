@@ -70,6 +70,18 @@ function send_prefs(overrides) {
     }
 }
 
+// Change one F-key character set entry and re-broadcast so the toolbar redraws
+// (mirrors the desktop fkey-prefs window writing back to preferences).
+function update_fkey(fkey_index, num, code) {
+    if (!_prefs.fkeys[fkey_index]) return;
+    _prefs.fkeys[fkey_index][num] = code;
+    to_renderer.emit("fkeys", _prefs.fkeys);
+}
+
+function set_custom_block(code) {
+    to_renderer.emit("set_custom_block", code);
+}
+
 const native_handlers = {
     // Open a document the native side already read into memory.
     open_file({ path, base64, bytes } = {}) {
@@ -140,4 +152,4 @@ function boot() {
     }
 }
 
-module.exports = { boot, receive, DEFAULT_NEW_DOCUMENT };
+module.exports = { boot, receive, update_fkey, set_custom_block, DEFAULT_NEW_DOCUMENT };

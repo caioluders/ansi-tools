@@ -56,8 +56,8 @@ the Moebius renderer in a WKWebView and replacing only the native layer.
       `update_menu_checkboxes` (currently optimistic + a couple of keys).
 - [ ] Multi-button save prompt as a native action sheet (currently collapses onto
       confirm/alert — see `shims/electron-remote.js`).
-- [ ] fkey editor modal (the renderer's `fkey_prefs` send_sync) for customising
-      the F1–F12 character sets.
+- [x] fkey editor: tapping an F-key/custom-block swatch opens a CP437 glyph
+      picker (the renderer's `fkey_prefs` send_sync) and updates the fkeys table.
 - [ ] Remaining modal windows (new-connection saved-servers list, control
       characters warning) and richer Preferences (iCE colours default, fonts).
 - [ ] Multi-document support via multiple `UIScene`s (iPad).
