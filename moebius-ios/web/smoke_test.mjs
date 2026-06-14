@@ -9,8 +9,8 @@ import http from "node:http";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import pw from "/opt/node22/lib/node_modules/playwright/index.js";
-const { chromium } = pw;
+import { loadChromium } from "./test_helpers.mjs";
+const chromium = await loadChromium();
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const www = path.join(root, "dist/www");

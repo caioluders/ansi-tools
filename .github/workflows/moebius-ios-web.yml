@@ -1,0 +1,56 @@
+name: moebius-ios web
+
+# Build and headlessly verify the Moebius iOS port's web layer. The native iOS
+# app must be built on macOS with Xcode and is out of scope for this workflow.
+
+on:
+  push:
+    paths:
+      - "moebius-ios/web/**"
+      - ".github/workflows/moebius-ios-web.yml"
+  pull_request:
+    paths:
+      - "moebius-ios/web/**"
+      - ".github/workflows/moebius-ios-web.yml"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: moebius-ios/web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Build web bundle
+        run: npm run build
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm i --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+
+      - name: Smoke test (boot + render)
+        run: node smoke_test.mjs
+
+      - name: Functional test (type + F-keys + save)
+        run: node func_test.mjs
+
+      - name: Menu + modals test
+        run: node menu_test.mjs
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: |
+            moebius-ios/web/dist/screenshot.png
+          if-no-files-found: ignore
